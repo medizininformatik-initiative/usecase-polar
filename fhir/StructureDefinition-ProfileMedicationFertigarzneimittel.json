@@ -1,0 +1,62 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "ProfileMedicationFertigarzneimittel",
+  "url": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationFertigarzneimittel",
+  "version": "0.1.0",
+  "name": "ProfileMedicationFertigarzneimittel",
+  "title": "Profile - Medication - Fertigarzneimittel",
+  "status": "active",
+  "description": "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines normierten Fertigarzneimittels (bzw. Bestandteil von der Stange) im POLAR Use Case.",
+  "fhirVersion": "4.0.1",
+  "mapping": [
+    {
+      "identity": "script10.6",
+      "uri": "http://ncpdp.org/SCRIPT10_6",
+      "name": "Mapping to NCPDP SCRIPT 10.6"
+    },
+    {
+      "identity": "rim",
+      "uri": "http://hl7.org/v3",
+      "name": "RIM Mapping"
+    },
+    {
+      "identity": "w5",
+      "uri": "http://hl7.org/fhir/fivews",
+      "name": "FiveWs Pattern Mapping"
+    },
+    {
+      "identity": "v2",
+      "uri": "http://hl7.org/v2",
+      "name": "HL7 v2 Mapping"
+    }
+  ],
+  "kind": "resource",
+  "abstract": false,
+  "type": "Medication",
+  "baseDefinition": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Medication",
+        "path": "Medication",
+        "constraint": [
+          {
+            "key": "polar-9",
+            "severity": "warning",
+            "human": "Für alle Fertigarzneimittel soll ein IFA Code für die Darreichungsform angegeben werden.",
+            "expression": "form.coding.where(system = 'https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_BMP_DARREICHUNGSFORM').exists()",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationFertigarzneimittel"
+          },
+          {
+            "key": "polar-10",
+            "severity": "warning",
+            "human": "Für alle Fertigarzneimittel soll ein ATC Code (DE) und/oder eine PZN angegeben werden.",
+            "expression": "code.coding.where(system='http://fhir.de/CodeSystem/dimdi/atc' or system='http://fhir.de/CodeSystem/ifa/pzn').exists()",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationFertigarzneimittel"
+          }
+        ]
+      }
+    ]
+  }
+}

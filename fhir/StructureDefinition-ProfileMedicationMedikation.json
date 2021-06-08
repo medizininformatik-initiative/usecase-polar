@@ -1,0 +1,133 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "ProfileMedicationMedikation",
+  "url": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation",
+  "version": "0.1.0",
+  "name": "ProfileMedicationMedikation",
+  "title": "Profile - Medication - Medikation",
+  "status": "active",
+  "description": "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines Medikamentes (Mischungen) im POLAR Use Case.",
+  "fhirVersion": "4.0.1",
+  "mapping": [
+    {
+      "identity": "script10.6",
+      "uri": "http://ncpdp.org/SCRIPT10_6",
+      "name": "Mapping to NCPDP SCRIPT 10.6"
+    },
+    {
+      "identity": "rim",
+      "uri": "http://hl7.org/v3",
+      "name": "RIM Mapping"
+    },
+    {
+      "identity": "w5",
+      "uri": "http://hl7.org/fhir/fivews",
+      "name": "FiveWs Pattern Mapping"
+    },
+    {
+      "identity": "v2",
+      "uri": "http://hl7.org/v2",
+      "name": "HL7 v2 Mapping"
+    }
+  ],
+  "kind": "resource",
+  "abstract": false,
+  "type": "Medication",
+  "baseDefinition": "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "Medication",
+        "path": "Medication",
+        "constraint": [
+          {
+            "key": "polar-1",
+            "severity": "error",
+            "human": "Mindestens eine Extension Wirkstofftyp mit Wert PIN",
+            "expression": "ingredient.extension('https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstofftyp').exists(value.code = 'PIN')",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation"
+          }
+        ]
+      },
+      {
+        "id": "Medication.form.coding:IFA",
+        "path": "Medication.form.coding",
+        "sliceName": "IFA",
+        "min": 0,
+        "max": "*",
+        "patternCoding": {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_BMP_DARREICHUNGSFORM"
+        }
+      },
+      {
+        "id": "Medication.ingredient",
+        "path": "Medication.ingredient",
+        "constraint": [
+          {
+            "key": "polar-2",
+            "severity": "error",
+            "human": "Die Referenz auf eine andere Medication Ressource stellt immer ein ‚PIN‘ dar.",
+            "expression": "itemReference.exists() implies extension('https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstofftyp').exists(value.code = 'PIN')",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation"
+          },
+          {
+            "key": "polar-3",
+            "severity": "error",
+            "human": "Als ‚IN‘ markierte Ingredients sind auch hier als „entspricht“-Angaben zu verstehen und dürfen nicht auf andere Medication Ressourcen referenzieren.",
+            "expression": "extension('https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstofftyp').exists(value.code = 'IN') implies itemReference.empty()",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation"
+          },
+          {
+            "key": "polar-4",
+            "severity": "error",
+            "human": "strength.denominator.code muss in allen ingredients gleich sein.",
+            "expression": "strength.denominator.code.exists() implies strength.denominator.code.distinct().count() = 1",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation"
+          },
+          {
+            "key": "polar-5",
+            "severity": "error",
+            "human": "Bei der Referenz des Ingredients auf eine andere Medication Ressource, muss die Einheit, mit der der Numerator der Strength angegeben wird, dem Denominator der Strength (Amount?) in der referenzierten Medication entsprechen.",
+            "expression": "itemReference.exists() implies (strength.numerator.code = itemReference.resolve().ingredient.strength.denominator.code.first())",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation"
+          },
+          {
+            "key": "polar-7",
+            "severity": "warning",
+            "human": "Wenn ein Inhaltsstoff nicht explizit als nicht aktiv markiert ist, soll ein ASK oder ersatzweise ein CAS Code vorhanden sein.",
+            "expression": "(isActive = false) or itemCodeableConcept.coding.where(system = 'http://fhir.de/CodeSystem/ask' or system = 'urn:oid:2.16.840.1.113883.6.61').exists()",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation"
+          },
+          {
+            "key": "polar-8",
+            "severity": "warning",
+            "human": "Als Einheit für den Nenner (denominator) sollen möglichst UCUM-Einheiten verwendet werden.",
+            "expression": "strength.denominator.system = 'http://unitsofmeasure.org'",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationMedikation"
+          }
+        ]
+      },
+      {
+        "id": "Medication.ingredient.item[x]",
+        "path": "Medication.ingredient.item[x]",
+        "type": [
+          {
+            "code": "CodeableConcept"
+          },
+          {
+            "code": "Reference",
+            "targetProfile": [
+              "http://hl7.org/fhir/StructureDefinition/Medication"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Medication.ingredient.isActive",
+        "path": "Medication.ingredient.isActive",
+        "mustSupport": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "resourceType": "StructureDefinition",
+  "id": "ProfileMedicationAdministration",
+  "url": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationAdministration",
+  "version": "0.1.0",
+  "name": "ProfileMedicationAdministration",
+  "title": "Profile - MedicationAdministration - Medikation",
+  "status": "active",
+  "description": "Auf der MII Medikation aufbauendes Profil zur Beschreibung einer MedicationAdministration im POLAR Use Case.",
+  "fhirVersion": "4.0.1",
+  "kind": "resource",
+  "abstract": false,
+  "type": "MedicationAdministration",
+  "baseDefinition": "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationAdministration",
+  "derivation": "constraint",
+  "differential": {
+    "element": [
+      {
+        "id": "MedicationAdministration",
+        "path": "MedicationAdministration",
+        "constraint": [
+          {
+            "key": "polar-6",
+            "severity": "error",
+            "human": "Die Dosis (dose und rateQuantity oder rateRatio.numerator) in MedicationAdministration und MedicationStatement muss die gleiche Einheit wie der Denominator in der Strength der ingredients haben.",
+            "expression": "medicationReference.exists() implies (dosage.dose.code | rateQuantity.code | rateRatio.numerator.code) = medicationReference.resolve().ingredient.strength.denominator.code",
+            "source": "https://www.medizininformatik-initiative.de/fhir/polar/StructureDefinition/ProfileMedicationAdministration"
+          }
+        ]
+      }
+    ]
+  }
+}
