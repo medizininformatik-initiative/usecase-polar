@@ -51,7 +51,7 @@ Severity:   #error
 
 //Ingredient.Strength.Numerator: Bei der Referenz des Ingredients auf eine andere Medication Ressource, muss die Einheit, mit der der Numerator (Zähler) der Strength angegeben wird, dem Denominator der Strength in der referenzierten Medication entsprechen.
 Invariant:  polar-5
-Description: "Bei der Referenz des Ingredients auf eine andere Medication Ressource, muss die Einheit, mit der der Numerator der Strength angegeben wird, dem Denominator der Strength (Amount?) in der referenzierten Medication entsprechen."
+Description: "Bei der Referenz des Ingredients auf eine andere Medication Ressource, muss die Einheit, mit der der Numerator der Strength angegeben wird, dem Denominator der Strength in der referenzierten Medication entsprechen."
 Expression: "itemReference.exists() implies (strength.numerator.code = itemReference.resolve().ingredient.strength.denominator.code.first())"
 Severity:   #error
 
