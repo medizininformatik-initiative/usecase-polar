@@ -6,6 +6,7 @@ Id: ProfileMedicationMedikation
 Title: "Profile - Medication - Medikation"
 Description: "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines Medikamentes (Mischungen) im POLAR Use Case."
 
+* ^status = #draft
 * obeys polar-1
 
 * form.coding contains IFA 0..*
@@ -72,6 +73,7 @@ Id: ProfileMedicationAdministration
 Title: "Profile - MedicationAdministration - Medikation"
 Description: "Auf der MII Medikation aufbauendes Profil zur Beschreibung einer MedicationAdministration im POLAR Use Case."
 
+* ^status = #draft
 * obeys polar-6
 
 Profile: ProfileMedicationStatement
@@ -80,6 +82,7 @@ Id: ProfileMedicationStatement
 Title: "Profile - MedicationStatement - Medikation"
 Description: "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines MedicationStatement im POLAR Use Case."
 
+* ^status = #draft
 * obeys polar-6
 
 
@@ -97,6 +100,7 @@ Id: ProfileMedicationFertigarzneimittel
 Title: "Profile - Medication - Fertigarzneimittel"
 Description: "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines normierten Fertigarzneimittels (bzw. Bestandteil von der Stange) im POLAR Use Case."
 
+* ^status = #draft
 * obeys polar-9 and polar-10
 
 

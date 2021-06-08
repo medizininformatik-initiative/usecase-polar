@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "name": "ProfileMedicationFertigarzneimittel",
   "title": "Profile - Medication - Fertigarzneimittel",
-  "status": "active",
+  "status": "draft",
   "description": "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines normierten Fertigarzneimittels (bzw. Bestandteil von der Stange) im POLAR Use Case.",
   "fhirVersion": "4.0.1",
   "mapping": [
