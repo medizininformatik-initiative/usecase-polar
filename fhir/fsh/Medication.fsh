@@ -9,8 +9,10 @@ Description: "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines M
 * ^status = #draft
 * obeys polar-1
 
-* form.coding contains IFA 0..*
+* form.coding contains IFA 0..* MS
 * form.coding[IFA] ^patternCoding.system = "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_BMP_DARREICHUNGSFORM"
+* form.coding[IFA].code 1..1
+* form.coding[IFA].system 1..1
 
 * ingredient obeys polar-2 and polar-3 and polar-4 and polar-5 and polar-7 and polar-8
 
@@ -18,6 +20,7 @@ Description: "Auf der MII Medikation aufbauendes Profil zur Beschreibung eines M
 
 // Substance soll nicht verwendet werden? Falls doch: Invariante polar-5 anpassen (Referenzen auf Substance abfangen und nicht prüfen)
 * ingredient.item[x] only Reference(Medication) or CodeableConcept
+* ingredient.itemReference MS
 
 
 //Minibeispiel für Mischung mit Einheiten
