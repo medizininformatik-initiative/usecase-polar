@@ -502,8 +502,8 @@ ingredient.name
 ingredient.dosage.value
 ingredient.dosage.unit
 ingredient.type</note>
-      <xloc>448</xloc>
-      <yloc>208</yloc>
+      <xloc>400</xloc>
+      <yloc>192</yloc>
       <width>137</width>
       <heigth>106</heigth>
       <fontname>Segoe UI</fontname>
@@ -573,57 +573,6 @@ ingredient.type</note>
       </attribute>
     </attributes>
   </connection>
-  <connection>
-    <name>stage_meona</name>
-    <server>${db_stage_meonaHost}</server>
-    <type>POSTGRESQL</type>
-    <access>Native</access>
-    <database>${db_stage_meonaDB}</database>
-    <port>${db_stage_meonaPort}</port>
-    <username>${db_stage_meonaUser}</username>
-    <password>${db_stage_meonaPassword}</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
-    <attributes>
-      <attribute>
-        <code>FORCE_IDENTIFIERS_TO_LOWERCASE</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>FORCE_IDENTIFIERS_TO_UPPERCASE</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>IS_CLUSTERED</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>PORT_NUMBER</code>
-        <attribute>${db_stage_meonaPort}</attribute>
-      </attribute>
-      <attribute>
-        <code>PRESERVE_RESERVED_WORD_CASE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>QUOTE_ALL_FIELDS</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>SUPPORTS_BOOLEAN_DATA_TYPE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>SUPPORTS_TIMESTAMP_DATA_TYPE</code>
-        <attribute>Y</attribute>
-      </attribute>
-      <attribute>
-        <code>USE_POOLING</code>
-        <attribute>N</attribute>
-      </attribute>
-    </attributes>
-  </connection>
   <order>
     <hop>
       <from>Filter out invalid ATC codes</from>
@@ -631,23 +580,8 @@ ingredient.type</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Look up ATC code</from>
-      <to>Filter out invalid ATC codes</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Look up ATC code</from>
-      <to>Missing ATC codes</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Build FHIR Medication</from>
       <to>Select &amp; rename fhir</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Add constants: filedir</from>
-      <to>Concat fields</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -676,8 +610,13 @@ ingredient.type</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>MeonaTest</from>
-      <to>Look up ATC code</to>
+      <from>Value mapper</from>
+      <to>Select &amp; alter</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Unique rows</from>
+      <to>Group by</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -686,13 +625,18 @@ ingredient.type</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Value mapper</from>
-      <to>Select &amp; alter</to>
+      <from>Filter out invalid ATC codes</from>
+      <to>Value mapper</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Unique rows</from>
-      <to>Group by</to>
+      <from>Add constants: filedir</from>
+      <to>Concat fields</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>MeonaTest</from>
+      <to>Filter out invalid ATC codes</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -716,8 +660,8 @@ ingredient.type</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
-      <yloc>336</yloc>
+      <xloc>192</xloc>
+      <yloc>432</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -755,8 +699,8 @@ ingredient.type</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1248</xloc>
-      <yloc>144</yloc>
+      <xloc>1200</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -891,8 +835,8 @@ var fhir = JSON.stringify(template);</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>960</xloc>
-      <yloc>144</yloc>
+      <xloc>912</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -977,8 +921,8 @@ var fhir = JSON.stringify(template);</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1360</xloc>
-      <yloc>144</yloc>
+      <xloc>1312</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1001,14 +945,14 @@ var fhir = JSON.stringify(template);</jsScript_script>
         <conditions>
           <condition>
             <negated>Y</negated>
-            <leftvalue>ATC</leftvalue>
+            <leftvalue>m.atc</leftvalue>
             <function>IS NULL</function>
             <rightvalue/>
           </condition>
           <condition>
             <negated>Y</negated>
             <operator>AND</operator>
-            <leftvalue>ATC</leftvalue>
+            <leftvalue>m.atc</leftvalue>
             <function>=</function>
             <rightvalue/>
             <value>
@@ -1024,7 +968,7 @@ var fhir = JSON.stringify(template);</jsScript_script>
           <condition>
             <negated>Y</negated>
             <operator>AND</operator>
-            <leftvalue>ATC</leftvalue>
+            <leftvalue>m.atc</leftvalue>
             <function>=</function>
             <rightvalue/>
             <value>
@@ -1049,8 +993,8 @@ var fhir = JSON.stringify(template);</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
-      <yloc>144</yloc>
+      <xloc>192</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1116,56 +1060,8 @@ var fhir = JSON.stringify(template);</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>848</xloc>
-      <yloc>144</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Look up ATC code</name>
-    <type>DBLookup</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>stage_meona</connection>
-    <cache>Y</cache>
-    <cache_load_all>Y</cache_load_all>
-    <cache_size>0</cache_size>
-    <lookup>
-      <schema>${db_stage_meonaSchema}</schema>
-      <table>medicament</table>
-      <orderby/>
-      <fail_on_multiple>N</fail_on_multiple>
-      <eat_row_on_failure>N</eat_row_on_failure>
-      <key>
-        <name>me.mid</name>
-        <field>MID</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>ATC</name>
-        <rename>ATC</rename>
-        <default/>
-        <type>String</type>
-      </value>
-    </lookup>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>112</xloc>
-      <yloc>144</yloc>
+      <xloc>800</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1181,79 +1077,73 @@ var fhir = JSON.stringify(template);</jsScript_script>
       <schema_name/>
     </partitioning>
     <connection>MeonaTest</connection>
-    <sql>select
-	distinct aa.id,
-	actual_date_time as "effectivedatetime",
-	patient_id as "subject",
-	ma.route_of_application as "dosage.route",
-	i.name as "ingredient.name",
-	i.ingredient_type as "ingredient.type",
-	i.amount as "ingredient.dosage.value",
-	i.unit as "ingredient.dosage.unit",
-	ma.actual_dose as "ma.actual_dose", 
-	ma.perfusor_appl_type as "ma.perfusor_appl_type",
-	ma.perfusor_volume as "ma.perfusor_volume",
-	ma.site_of_application as "ma.site_of_application",
-	ma.status as "ma.status",
- 	mo.bolus_value as "mo.bolus_value",
-	mo.bolus_unit as "mo.bolus_unit",
-	mo.dosage_ingredient_unit as "mo.dosage_ingredient_unit",
-	mo.dosage_ingredient_id as "mo.dosage_ingredient_id",
-	mo.dosage_type as "mo.dosage_type",
-	mo.total_volume as "mo.total_volume",
-	mom.dosage_ingredient_unit as "mom.dosage_ingredient_unit",
-	mom.dosage_ingredient_id as "mom.dosage_ingredient_id",
-	mom.volume as "mom.volume",
-	mom.volume_unit as "mom.volume_unit",
-	mom.dosage_type as "mom.dosage_type",
-	i.substance_id as "i.substance_id",
-	m.pharmaceutical_form as "m.pharmaceutical_form",
-	m.reference_unit as "m.reference_unit",
-	m.reference_value as "m.reference_value",
-	me.id as "me.id",
-	me.name as "me.name",
-	me.mid as "me.mid",
-	me.equivalent_type as "me.equivalent_type",
-	me.amount as "me.amount",
-	me.unit as "me.unit",
-	m.sortname as "m.sortname",
-	m.tradename as "m.tradename",
-	m.unit_dose_name as "m.unit_dose_names",
-	i2.amount as "i.amount.lookup",
-	me2.amount "me.amount.lookup"
-from
-	phoenix.abstract_application aa
-join phoenix.medication_application ma on
-	aa.id = ma.id
-left join phoenix.medication_order mo on
-	mo.id = aa.main_order_id
-left join phoenix.medication_order_medicament mom on
-	mom.medication_order = aa.main_order_id
-left join phoenix.ingredient i on
-	i.medicament = ma.mid
-left join phoenix.medicament m on
-	m.mid = ma.mid
-left join phoenix.abda_are_med_object fam on
-	m.source_id = fam.key_fam
-left join phoenix.medicament_equivalent me on
-	me.mid = ma.mid
--- ...ingredient.dosage...	
--- on mo.dosage_ingredient_id = ingredient.id
-left join phoenix.ingredient i2 on
-	i2.ID = mo.dosage_ingredient_id 
--- ...medicament_equivalent.amount...
--- on mo.dosage_ingredient_id = me.ID
-left join phoenix.medicament_equivalent me2 on
-	me2.id = mo.dosage_ingredient_id	
-where
-	deleted = false
-	and aa.recent = true
-	and aa.id > 1003434011
-	and m.recent = true
-	and aa.application_by in ('haverka', 'studie')
+    <sql>(
+	select distinct 
+		aa.id as "aa.id"
+		, m.atc as "m.atc"
+		, m.pharmaceutical_form as "m.pharmaceutical_form"
+	    , m.sortname as "m.sortname"
+		, m.tradename as "m.tradename"
+		, i.name as "ingredient.name"
+		, i.amount as "ingredient.dosage.value"
+		, i.unit as "ingredient.dosage.unit"
+		, i.ingredient_type as "ingredient.type"
+		, i.sequence_number as "i.sequence_number"
+		, m.reference_value as "m.reference_value"
+		, m.reference_unit as "m.reference_unit"
+		, m.mid as "m.mid"
+		, i.substance_id as "i.substance_id"
+		, m.unit_dose_name as "m.unit_dose_names"
+	from
+		phoenix.medicament m
+	join phoenix.medication_application ma on
+		m.mid = ma.mid
+	join phoenix.abstract_application aa on
+		aa.id = ma.id
+	join phoenix.ingredient i on
+		i.medicament = m.mid	
+	where
+		aa.deleted = false
+		and aa.recent = true
+		and aa.id > 1003434011
+		and m.recent = true
+		and aa.application_by in ('haverka', 'studie')
+	)
+union 
+(
+	select distinct 
+		aa.id as "aa.id"
+		, m.atc as "m.atc"
+		, m.pharmaceutical_form as "m.pharmaceutical_form"
+	    , m.sortname as "m.sortname"
+		, m.tradename as "m.tradename"
+		, i.name as "ingredient.name"
+		, i.amount as "ingredient.dosage.value"
+		, i.unit as "ingredient.dosage.unit"
+		, i.ingredient_type as "ingredient.type"
+		, i.sequence_number as "i.sequence_number"
+		, m.reference_value as "m.reference_value"
+		, m.reference_unit as "m.reference_unit"
+		, m.mid as "m.mid"
+		, i.substance_id as "i.substance_id"
+		, m.unit_dose_name as "m.unit_dose_names"
+	from
+		phoenix.medicament m
+	join phoenix.medication_order_medicament mom on
+		mom.mid = m.mid
+	join phoenix.abstract_application aa on
+		mom.medication_order = aa.main_order_id 
+	join phoenix.ingredient i on
+		i.medicament = m.mid	
+	where
+		aa.deleted = false
+		and aa.recent = true
+		and aa.id > 1003434011
+		and m.recent = true
+		and aa.application_by in ('haverka', 'studie')
+)	
 order by
-	aa.id desc
-</sql>
+	aa.id desc</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -1264,80 +1154,11 @@ order by
       <value-meta>
         <type>Integer</type>
         <storagetype>normal</storagetype>
-        <name>ID</name>
+        <name>aa.id</name>
         <length>9</length>
         <precision>0</precision>
         <origin>MeonaTest</origin>
-        <comments>ID</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Timestamp</type>
-        <storagetype>normal</storagetype>
-        <name>effectivedatetime</name>
-        <length>0</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>effectivedatetime</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>subject</name>
-        <length>19</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>subject</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>dosage.route</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>dosage.route</comments>
+        <comments>aa.id</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
         <decimal_symbol>,</decimal_symbol>
         <grouping_symbol>.</grouping_symbol>
@@ -1356,474 +1177,14 @@ order by
       <value-meta>
         <type>String</type>
         <storagetype>normal</storagetype>
-        <name>ingredient.name</name>
-        <length>450</length>
+        <name>m.atc</name>
+        <length>7</length>
         <precision>-1</precision>
         <origin>MeonaTest</origin>
-        <comments>ingredient.name</comments>
+        <comments>m.atc</comments>
         <conversion_Mask/>
         <decimal_symbol>,</decimal_symbol>
         <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>ingredient.type</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>ingredient.type</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>ingredient.dosage.value</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>ingredient.dosage.value</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>ingredient.dosage.unit</name>
-        <length>40</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>ingredient.dosage.unit</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>ma.actual_dose</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>ma.actual_dose</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>ma.perfusor_appl_type</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>ma.perfusor_appl_type</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>ma.perfusor_volume</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>ma.perfusor_volume</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>ma.site_of_application</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>ma.site_of_application</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>ma.status</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>ma.status</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>mo.bolus_value</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>mo.bolus_value</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>mo.bolus_unit</name>
-        <length>32</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>mo.bolus_unit</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>mo.dosage_ingredient_unit</name>
-        <length>32</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>mo.dosage_ingredient_unit</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>mo.dosage_ingredient_id</name>
-        <length>19</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>mo.dosage_ingredient_id</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>mo.dosage_type</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>mo.dosage_type</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>mo.total_volume</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>mo.total_volume</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>mom.dosage_ingredient_unit</name>
-        <length>16</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>mom.dosage_ingredient_unit</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>mom.dosage_ingredient_id</name>
-        <length>19</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>mom.dosage_ingredient_id</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>mom.volume</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>mom.volume</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>mom.volume_unit</name>
-        <length>16</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>mom.volume_unit</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>mom.dosage_type</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>mom.dosage_type</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>i.substance_id</name>
-        <length>19</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>i.substance_id</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -1844,190 +1205,6 @@ order by
         <precision>-1</precision>
         <origin>MeonaTest</origin>
         <comments>m.pharmaceutical_form</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>m.reference_unit</name>
-        <length>8</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>m.reference_unit</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>m.reference_value</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>m.reference_value</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>me.id</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>me.id</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>me.name</name>
-        <length>255</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>me.name</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>me.mid</name>
-        <length>9</length>
-        <precision>0</precision>
-        <origin>MeonaTest</origin>
-        <comments>me.mid</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>me.equivalent_type</name>
-        <length>255</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>me.equivalent_type</comments>
-        <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>BigNumber</type>
-        <storagetype>normal</storagetype>
-        <name>me.amount</name>
-        <length>20</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>me.amount</comments>
-        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_US</date_format_locale>
-        <date_format_timezone>Europe/Berlin</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>me.unit</name>
-        <length>255</length>
-        <precision>-1</precision>
-        <origin>MeonaTest</origin>
-        <comments>me.unit</comments>
         <conversion_Mask/>
         <decimal_symbol>,</decimal_symbol>
         <grouping_symbol>.</grouping_symbol>
@@ -2092,11 +1269,11 @@ order by
       <value-meta>
         <type>String</type>
         <storagetype>normal</storagetype>
-        <name>m.unit_dose_names</name>
-        <length>80</length>
+        <name>ingredient.name</name>
+        <length>450</length>
         <precision>-1</precision>
         <origin>MeonaTest</origin>
-        <comments>m.unit_dose_names</comments>
+        <comments>ingredient.name</comments>
         <conversion_Mask/>
         <decimal_symbol>,</decimal_symbol>
         <grouping_symbol>.</grouping_symbol>
@@ -2115,11 +1292,11 @@ order by
       <value-meta>
         <type>BigNumber</type>
         <storagetype>normal</storagetype>
-        <name>i.amount.lookup</name>
+        <name>ingredient.dosage.value</name>
         <length>20</length>
         <precision>-1</precision>
         <origin>MeonaTest</origin>
-        <comments>i.amount.lookup</comments>
+        <comments>ingredient.dosage.value</comments>
         <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
         <grouping_symbol/>
@@ -2136,16 +1313,177 @@ order by
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
+        <type>String</type>
+        <storagetype>normal</storagetype>
+        <name>ingredient.dosage.unit</name>
+        <length>40</length>
+        <precision>-1</precision>
+        <origin>MeonaTest</origin>
+        <comments>ingredient.dosage.unit</comments>
+        <conversion_Mask/>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Berlin</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>ingredient.type</name>
+        <length>9</length>
+        <precision>0</precision>
+        <origin>MeonaTest</origin>
+        <comments>ingredient.type</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Berlin</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>i.sequence_number</name>
+        <length>9</length>
+        <precision>0</precision>
+        <origin>MeonaTest</origin>
+        <comments>i.sequence_number</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Berlin</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
         <type>BigNumber</type>
         <storagetype>normal</storagetype>
-        <name>me.amount.lookup</name>
+        <name>m.reference_value</name>
         <length>20</length>
         <precision>-1</precision>
         <origin>MeonaTest</origin>
-        <comments>me.amount.lookup</comments>
+        <comments>m.reference_value</comments>
         <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
         <grouping_symbol/>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Berlin</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>String</type>
+        <storagetype>normal</storagetype>
+        <name>m.reference_unit</name>
+        <length>8</length>
+        <precision>-1</precision>
+        <origin>MeonaTest</origin>
+        <comments>m.reference_unit</comments>
+        <conversion_Mask/>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Berlin</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>m.mid</name>
+        <length>9</length>
+        <precision>0</precision>
+        <origin>MeonaTest</origin>
+        <comments>m.mid</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Berlin</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>BigNumber</type>
+        <storagetype>normal</storagetype>
+        <name>i.substance_id</name>
+        <length>19</length>
+        <precision>0</precision>
+        <origin>MeonaTest</origin>
+        <comments>i.substance_id</comments>
+        <conversion_Mask>######0.0###################;-######0.0###################</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>Europe/Berlin</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>String</type>
+        <storagetype>normal</storagetype>
+        <name>m.unit_dose_names</name>
+        <length>80</length>
+        <precision>-1</precision>
+        <origin>MeonaTest</origin>
+        <comments>m.unit_dose_names</comments>
+        <conversion_Mask/>
+        <decimal_symbol>,</decimal_symbol>
+        <grouping_symbol>.</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2168,33 +1506,8 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>112</xloc>
+      <xloc>64</xloc>
       <yloc>16</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Missing ATC codes</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>112</xloc>
-      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2211,11 +1524,11 @@ order by
     </partitioning>
     <fields>
       <field>
-        <name>ATC</name>
+        <name>m.atc</name>
         <rename>concept_cd</rename>
       </field>
       <field>
-        <name>me.mid</name>
+        <name>m.mid</name>
       </field>
       <field>
         <name>ingredient.name</name>
@@ -2231,7 +1544,7 @@ order by
       </field>
       <select_unspecified>N</select_unspecified>
       <meta>
-        <name>me.mid</name>
+        <name>m.mid</name>
         <rename>medicationReference</rename>
         <type>Integer</type>
         <length>-2</length>
@@ -2325,8 +1638,8 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>496</xloc>
-      <yloc>144</yloc>
+      <xloc>448</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2360,8 +1673,8 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1104</xloc>
-      <yloc>144</yloc>
+      <xloc>1056</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2442,8 +1755,8 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>624</xloc>
-      <yloc>144</yloc>
+      <xloc>576</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2511,7 +1824,7 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1360</xloc>
+      <xloc>1312</xloc>
       <yloc>16</yloc>
       <draw>Y</draw>
     </GUI>
@@ -2541,8 +1854,8 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>736</xloc>
-      <yloc>144</yloc>
+      <xloc>688</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2575,24 +1888,12 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>368</xloc>
-      <yloc>144</yloc>
+      <xloc>320</xloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step_error_handling>
-    <error>
-      <source_step>Look up ATC code</source_step>
-      <target_step>Missing ATC codes</target_step>
-      <is_enabled>Y</is_enabled>
-      <nr_valuename/>
-      <descriptions_valuename/>
-      <fields_valuename/>
-      <codes_valuename/>
-      <max_errors/>
-      <max_pct_errors/>
-      <min_pct_rows/>
-    </error>
   </step_error_handling>
   <slave-step-copy-partition-distribution>
   </slave-step-copy-partition-distribution>
