@@ -496,16 +496,49 @@
   </info>
   <notepads>
     <notepad>
-      <note>me.mid
-(atc)
+      <note>Genutzte Felder
+----------------
+
+(m.atc)
+me.mid
 ingredient.name
 ingredient.dosage.value
 ingredient.dosage.unit
-ingredient.type</note>
-      <xloc>400</xloc>
+ingredient.type → is_active_ingredient
+m.reference_value
+m.reference_unit
+m.pharmaceutical_form</note>
+      <xloc>336</xloc>
       <yloc>192</yloc>
-      <width>137</width>
-      <heigth>106</heigth>
+      <width>210</width>
+      <heigth>201</heigth>
+      <fontname>Segoe UI</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
+    <notepad>
+      <note>Fallunterscheidung (Filter rows)
+---------------------------------
+
+Wenn m_reference_unit = PCS (PCS bedeutet wohl "Stück"/Piece), 
+dann denominator.unit [= m_reference_unit] = m_pharmaceutical_form 
+
+(wie mit ID Medics besprochen)</note>
+      <xloc>480</xloc>
+      <yloc>0</yloc>
+      <width>393</width>
+      <heigth>120</heigth>
       <fontname>Segoe UI</fontname>
       <fontsize>9</fontsize>
       <fontbold>N</fontbold>
@@ -595,28 +628,8 @@ ingredient.type</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Group by</from>
-      <to>Build FHIR Medication</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select &amp; alter</from>
-      <to>Sort rows</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Sort rows</from>
-      <to>Unique rows</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Value mapper</from>
       <to>Select &amp; alter</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Unique rows</from>
-      <to>Group by</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -637,6 +650,46 @@ ingredient.type</note>
     <hop>
       <from>MeonaTest</from>
       <to>Filter out invalid ATC codes</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Set field value</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Group by</from>
+      <to>Build FHIR Medication</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select &amp; alter</from>
+      <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Gather</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set field value</from>
+      <to>Gather</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Gather</from>
+      <to>Sort rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows</from>
+      <to>Unique rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Unique rows</from>
+      <to>Group by</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -764,21 +817,30 @@ function zip() {
     });
 } // Source end
 
-function push([name, amount, unit, is_active]) {
+function push([name, amount, unit, ingredient_type, reference_value, reference_unit]) {
 	template["ingredient"].push({
-            "isActive": is_active,
+            "isActive": true,
+            "extension":  [
+                {
+                    "url": "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstofftyp",
+                    "valueCoding": {
+                        "code": ingredient_type,
+                        "display": ingredient_type == "IN"? "ingredient" : "precise ingredient",
+                        "system": "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/CodeSystem/wirkstofftyp"
+                    }
+                }
+            ],
             "itemCodeableConcept": {
 				"text": name
             },
             "strength": {
-				/*
                 "denominator": {
                     //"code": "ml",
                     //"system": "http://unitsofmeasure.org",
-                    //"unit": "ml",
+					"value": reference_value,
+                    "unit": reference_unit
                     
                 },
-				*/
                 "numerator": {
                     //"code": "mg",
                     //"system": "http://unitsofmeasure.org",
@@ -810,7 +872,9 @@ zip(
 	ingredient_name.split(", "),
 	ingredient_amount.split(", "),
 	ingredient_unit.split(", "),
-	is_active_ingredient.split(", ")
+	ingredient_type.split(", "),
+	m_reference_value.split(", "),
+	m_reference_unit.split(", ")
 ).forEach(push);
 
 var fhir = JSON.stringify(template);</jsScript_script>
@@ -835,7 +899,7 @@ var fhir = JSON.stringify(template);</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>912</xloc>
+      <xloc>944</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1002,7 +1066,7 @@ var fhir = JSON.stringify(template);</jsScript_script>
     <name>Group by</name>
     <type>GroupBy</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -1045,8 +1109,20 @@ var fhir = JSON.stringify(template);</jsScript_script>
         <valuefield/>
       </field>
       <field>
-        <aggregate>is_active_ingredient</aggregate>
-        <subject>is_active_ingredient</subject>
+        <aggregate>ingredient_type</aggregate>
+        <subject>ingredient_type</subject>
+        <type>CONCAT_COMMA</type>
+        <valuefield/>
+      </field>
+      <field>
+        <aggregate>m_reference_value</aggregate>
+        <subject>m_reference_value</subject>
+        <type>CONCAT_COMMA</type>
+        <valuefield/>
+      </field>
+      <field>
+        <aggregate>m_reference_unit</aggregate>
+        <subject>m_reference_unit</subject>
         <type>CONCAT_COMMA</type>
         <valuefield/>
       </field>
@@ -1060,7 +1136,7 @@ var fhir = JSON.stringify(template);</jsScript_script>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>800</xloc>
+      <xloc>848</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1529,18 +1605,35 @@ order by
       </field>
       <field>
         <name>m.mid</name>
+        <rename/>
       </field>
       <field>
         <name>ingredient.name</name>
+        <rename/>
       </field>
       <field>
         <name>ingredient.dosage.value</name>
+        <rename/>
       </field>
       <field>
         <name>ingredient.dosage.unit</name>
+        <rename/>
       </field>
       <field>
-        <name>is_active_ingredient</name>
+        <name>ingredient_type</name>
+        <rename/>
+      </field>
+      <field>
+        <name>m.reference_value</name>
+        <rename/>
+      </field>
+      <field>
+        <name>m.reference_unit</name>
+        <rename/>
+      </field>
+      <field>
+        <name>m.pharmaceutical_form</name>
+        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
       <meta>
@@ -1612,9 +1705,60 @@ order by
         <storage_type/>
       </meta>
       <meta>
-        <name>is_active_ingredient</name>
-        <rename>is_active_ingredient</rename>
-        <type>Boolean</type>
+        <name>ingredient_type</name>
+        <rename>ingredient_type</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>m.reference_value</name>
+        <rename>m_reference_value</rename>
+        <type>None</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>m.reference_unit</name>
+        <rename>m_reference_unit</rename>
+        <type>None</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>m.pharmaceutical_form</name>
+        <rename>m_pharmaceutical_form</rename>
+        <type>None</type>
         <length>-2</length>
         <precision>-2</precision>
         <conversion_mask/>
@@ -1638,7 +1782,7 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>448</xloc>
+      <xloc>416</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1673,7 +1817,7 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1056</xloc>
+      <xloc>1072</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1738,7 +1882,31 @@ order by
         <presorted>N</presorted>
       </field>
       <field>
-        <name>is_active_ingredient</name>
+        <name>ingredient_type</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>m_reference_value</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>m_reference_unit</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>m_pharmaceutical_form</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
         <collator_enabled>N</collator_enabled>
@@ -1755,7 +1923,7 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>576</xloc>
+      <xloc>688</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1833,7 +2001,7 @@ order by
     <name>Unique rows</name>
     <type>Unique</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -1854,7 +2022,7 @@ order by
       </output>
     </remotesteps>
     <GUI>
-      <xloc>688</xloc>
+      <xloc>768</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1871,12 +2039,16 @@ order by
       <schema_name/>
     </partitioning>
     <field_to_use>ingredient.type</field_to_use>
-    <target_field>is_active_ingredient</target_field>
-    <non_match_default>false</non_match_default>
+    <target_field>ingredient_type</target_field>
+    <non_match_default>''</non_match_default>
     <fields>
       <field>
         <source_value>0</source_value>
-        <target_value>true</target_value>
+        <target_value>PIN</target_value>
+      </field>
+      <field>
+        <source_value>2</source_value>
+        <target_value>IN</target_value>
       </field>
     </fields>
     <attributes/>
@@ -1889,6 +2061,106 @@ order by
     </remotesteps>
     <GUI>
       <xloc>320</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Set field value</name>
+    <type>SetValueField</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>m_reference_unit</name>
+        <replaceby>m_pharmaceutical_form</replaceby>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>608</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Set field value</send_true_to>
+    <send_false_to>Gather</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>m_reference_unit</leftvalue>
+        <function>=</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>PCS</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>496</xloc>
+      <yloc>128</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Gather</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>608</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
