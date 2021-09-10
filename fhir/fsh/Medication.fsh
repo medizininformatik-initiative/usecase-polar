@@ -120,3 +120,21 @@ Invariant:  polar-10
 Description: "Für alle Fertigarzneimittel soll ein ATC Code (DE) und/oder eine PZN angegeben werden."
 Expression: "code.coding.where(system='http://fhir.de/CodeSystem/dimdi/atc' or system='http://fhir.de/CodeSystem/ifa/pzn').exists()"
 Severity:   #warning
+
+
+// WIP: List für Aufnahme- und Entlassmedikation
+
+Profile: ProfileListMedikationsliste
+Parent: http://hl7.org/fhir/StructureDefinition/List
+Id: ProfileListMedikationsliste
+Title: "Profile - List- Medikationsliste"
+Description: "Liste mit MedicationStatments zur Dokumentation der Aufnahme- oder Entlassmedikation."
+
+* ^status = #draft
+* mode = #snapshot
+* code = http://terminology.hl7.org/CodeSystem/list-example-use-codes#medications "Medication List"
+* subject only Reference(Patient)
+* entry.flag 0..0
+* entry.deleted 0..0
+* entry.date 0..0
+* entry.item only Reference(https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationStatement)
