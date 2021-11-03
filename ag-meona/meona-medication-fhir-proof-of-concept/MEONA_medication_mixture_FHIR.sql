@@ -1,3 +1,4 @@
+--ALT -nicht verwenden
 select
 	ma.mid as "ma_mid",
 	ma.status as "ma_status",
