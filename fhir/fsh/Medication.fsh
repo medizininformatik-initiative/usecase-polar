@@ -120,3 +120,33 @@ Invariant:  polar-10
 Description: "Für alle Fertigarzneimittel soll ein ATC Code (DE) und/oder eine PZN angegeben werden."
 Expression: "code.coding.where(system='http://fhir.de/CodeSystem/dimdi/atc' or system='http://fhir.de/CodeSystem/ifa/pzn').exists()"
 Severity:   #warning
+
+
+// WIP: List für Aufnahme- und Entlassmedikation
+
+Profile: ProfileListMedikationsliste
+Parent: http://hl7.org/fhir/StructureDefinition/List
+Id: ProfileListMedikationsliste
+Title: "Profile - List- Medikationsliste"
+Description: "Liste mit MedicationStatments zur Dokumentation der Aufnahme- oder Entlassmedikation."
+
+* ^status = #draft
+* mode = #snapshot
+* code.coding ^slicing.discriminator.type = #pattern
+* code.coding ^slicing.discriminator.path = "system"
+* code.coding ^slicing.rules = #open
+* code.coding contains medCode 1..1 and contextCode 1..1
+* code.coding[medcode] = http://terminology.hl7.org/CodeSystem/list-example-use-codes#medications
+* code.coding[contextCode] from CaseContextCodes (required)
+* subject only Reference(Patient)
+* entry.flag 0..0
+* entry.deleted 0..0
+* entry.date 0..0
+* entry.item only Reference(https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/MedicationStatement)
+
+ValueSet: CaseContextCodes
+Id: case-context-codes
+Title: "Case Context Codes"
+
+* include urn:oid:1.3.6.1.4.1.19376.3.276.1.5.16#E210 "stationäre Aufnahme"
+* include urn:oid:1.3.6.1.4.1.19376.3.276.1.5.16#E230 "stationäre Entlassung"

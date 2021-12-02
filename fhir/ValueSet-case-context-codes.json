@@ -1,0 +1,26 @@
+{
+  "resourceType": "ValueSet",
+  "status": "active",
+  "name": "CaseContextCodes",
+  "id": "case-context-codes",
+  "title": "Case Context Codes",
+  "version": "0.1.0",
+  "url": "https://www.medizininformatik-initiative.de/fhir/polar/ValueSet/case-context-codes",
+  "compose": {
+    "include": [
+      {
+        "system": "urn:oid:1.3.6.1.4.1.19376.3.276.1.5.16",
+        "concept": [
+          {
+            "code": "E210",
+            "display": "stationäre Aufnahme"
+          },
+          {
+            "code": "E230",
+            "display": "stationäre Entlassung"
+          }
+        ]
+      }
+    ]
+  }
+}
