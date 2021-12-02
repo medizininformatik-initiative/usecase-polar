@@ -133,7 +133,7 @@ Description: "Liste mit MedicationStatments zur Dokumentation der Aufnahme- oder
 * ^status = #draft
 * mode = #snapshot
 * code.coding ^slicing.discriminator.type = #value
-* code.coding ^slicing.discriminator.path = "system"
+* code.coding ^slicing.discriminator.path = "$this"
 * code.coding ^slicing.rules = #open
 * code.coding contains medCode 1..1 and contextCode 1..1
 * code.coding[medCode] = http://terminology.hl7.org/CodeSystem/list-example-use-codes#medications
